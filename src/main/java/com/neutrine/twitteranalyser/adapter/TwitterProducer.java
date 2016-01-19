@@ -1,6 +1,7 @@
-package com.neutrine.twitteranalyser.producer;
+package com.neutrine.twitteranalyser.adapter;
 
 import com.google.common.collect.Lists;
+import com.neutrine.twitteranalyser.Configuration;
 import com.neutrine.twitteranalyser.MessageProcessor;
 import com.twitter.hbc.ClientBuilder;
 import com.twitter.hbc.core.Client;
@@ -9,9 +10,10 @@ import com.twitter.hbc.core.endpoint.StatusesFilterEndpoint;
 import com.twitter.hbc.core.processor.StringDelimitedProcessor;
 import com.twitter.hbc.httpclient.auth.Authentication;
 import com.twitter.hbc.httpclient.auth.OAuth1;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
-import java.util.Properties;
 import java.util.concurrent.BlockingQueue;
 import java.util.concurrent.LinkedBlockingQueue;
 
@@ -20,11 +22,8 @@ import java.util.concurrent.LinkedBlockingQueue;
  */
 @Service
 public class TwitterProducer {
-
-    private static final String CONSUMER_KEY = "";
-    private static final String CONSUMER_SECRET = "";
-    private static final String TOKEN = "";
-    private static final String TOKEN_SECRET = "";
+    @Autowired
+    private Configuration config;
 
     public void execute(MessageProcessor<String> messageProcessor) {
         BlockingQueue<String> queue = new LinkedBlockingQueue<String>(10000);
@@ -33,7 +32,8 @@ public class TwitterProducer {
         endpoint.trackTerms(Lists.newArrayList("brazil", "kafka"));
 
 
-        Authentication auth = new OAuth1(CONSUMER_KEY, CONSUMER_SECRET, TOKEN, TOKEN_SECRET);
+        Authentication auth = new OAuth1(config.getConsumerKey(), config.getConsumerSecret(), config.getToken(),
+                config.getTokenSecret());
 
         Client client = new ClientBuilder().hosts(Constants.STREAM_HOST)
                 .endpoint(endpoint).authentication(auth)

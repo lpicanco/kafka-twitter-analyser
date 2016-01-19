@@ -1,8 +1,8 @@
 package com.neutrine.twitteranalyser;
 
-import com.neutrine.twitteranalyser.consumer.ConsoleConsumer;
+import com.neutrine.twitteranalyser.adapter.TwitterProducer;
 import com.neutrine.twitteranalyser.consumer.KafkaConsumer;
-import com.neutrine.twitteranalyser.producer.TwitterProducer;
+import com.neutrine.twitteranalyser.producer.KafkaProducer;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.boot.SpringApplication;
@@ -15,10 +15,12 @@ public class TwitterKafkaAnalyserApplication implements CommandLineRunner {
     private TwitterProducer twitterProducer;
 
     @Autowired
-    private ConsoleConsumer consoleMessageProcessor;
+    private KafkaProducer kafkaProducer;
 
     @Autowired
     private KafkaConsumer kafkaConsumer;
+
+
 
     public static void main(String[] args) {
         SpringApplication.run(TwitterKafkaAnalyserApplication.class, args);
@@ -26,6 +28,13 @@ public class TwitterKafkaAnalyserApplication implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        twitterProducer.execute(kafkaConsumer);
+        new Thread(new Runnable() {
+            @Override
+            public void run() {
+                //kafkaConsumer.execute();
+            }
+        }).start();
+
+        twitterProducer.execute(kafkaProducer);
     }
 }

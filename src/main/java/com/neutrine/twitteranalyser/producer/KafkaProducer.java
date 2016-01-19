@@ -1,0 +1,45 @@
+package com.neutrine.twitteranalyser.producer;
+
+import com.neutrine.twitteranalyser.Configuration;
+import com.neutrine.twitteranalyser.MessageProcessor;
+import kafka.producer.KeyedMessage;
+import kafka.producer.ProducerConfig;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
+import java.util.Properties;
+
+/**
+ * Created by lpicanco on 16/01/16.
+ */
+@Service
+public class KafkaProducer implements MessageProcessor<String> {
+
+    private Configuration config;
+
+    private kafka.javaapi.producer.Producer<String, String> producer;
+
+    @Autowired
+    public KafkaProducer(Configuration config) {
+        this.config = config;
+
+        Properties properties = new Properties();
+        properties.put("metadata.broker.list", config.getKafkaBrokerList());
+        properties.put("serializer.class", "kafka.serializer.StringEncoder");
+        properties.put("client.id", "kafka-twitter-analyser-producer");
+        ProducerConfig producerConfig = new ProducerConfig(properties);
+        producer = new kafka.javaapi.producer.Producer<>(producerConfig);
+    }
+
+    @Override
+    public void process(String messageToProcess) {
+        System.out.println("Processing: " + messageToProcess);
+        KeyedMessage<String, String> message = new KeyedMessage<>(config.getKafkaTopic(), messageToProcess);
+        producer.send(message);
+    }
+
+    @Override
+    public void close() {
+        producer.close();
+    }
+}
