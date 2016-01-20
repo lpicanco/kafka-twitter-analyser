@@ -1,5 +1,6 @@
 package com.neutrine.twitteranalyser.consumer;
 
+import com.neutrine.twitteranalyser.Configuration;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Scope;
@@ -21,9 +22,12 @@ public class MessageDrivenKafkaConsumer {
     @Autowired
     private TwittConsumer twitterConsumer;
 
+    @Autowired
+    private Configuration config;
+
     @Bean
     public org.springframework.integration.kafka.core.Configuration zkConfiguration() {
-        return new ZookeeperConfiguration(new ZookeeperConnect());
+        return new ZookeeperConfiguration(new ZookeeperConnect(config.getZookeeperConnect()));
     }
 
     @Bean

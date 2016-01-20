@@ -20,7 +20,7 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Created by lpicanco on 16/01/16.
  */
 @Service
-public class TwitterProducer {
+public class TwitterAdapter {
     @Autowired
     private Configuration config;
 

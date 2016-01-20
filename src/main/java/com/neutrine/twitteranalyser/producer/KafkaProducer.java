@@ -33,12 +33,11 @@ public class KafkaProducer implements MessageProducer<String> {
         properties.put("client.id", "kafka-twitter-analyser-producer" + System.currentTimeMillis());
         ProducerConfig producerConfig = new ProducerConfig(properties);
         producer = new kafka.javaapi.producer.Producer<>(producerConfig);
-        log.warn("constructor !!!");
     }
 
     @Override
     public void process(String topic, String messageToProcess) {
-        System.out.println("Processing: " + messageToProcess);
+        log.debug("Processing: " + messageToProcess);
         KeyedMessage<String, String> message = new KeyedMessage<>(topic, messageToProcess);
         producer.send(message);
     }

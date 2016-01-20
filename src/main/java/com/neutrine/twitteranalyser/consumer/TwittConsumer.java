@@ -40,10 +40,6 @@ public class TwittConsumer extends BaseConsumer {
                         kafkaProducer.process(config.getKafkaTwitterWordTopic(), word.trim())
         );
 
-
-        //kafkaProducer.process(config.getKafkaTwitterWordTopic(), );
-        //log("TwitterConsumer: " + message.toString());
-        // log("TwitterConsumer[payload]: " + message.getPayload().toString());
-        log.info("TwitterConsumer[text]: %s)", twitt);
+        log.info("TwitterConsumer[text]: )" + twitt);
     }
 }

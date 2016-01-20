@@ -1,6 +1,6 @@
 package com.neutrine.twitteranalyser;
 
-import com.neutrine.twitteranalyser.adapter.TwitterProducer;
+import com.neutrine.twitteranalyser.adapter.TwitterAdapter;
 import com.neutrine.twitteranalyser.consumer.KafkaConsumer;
 import com.neutrine.twitteranalyser.producer.KafkaProducer;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -12,7 +12,7 @@ import org.springframework.boot.autoconfigure.SpringBootApplication;
 public class TwitterKafkaAnalyserApplication implements CommandLineRunner {
 
     @Autowired
-    private TwitterProducer twitterProducer;
+    private TwitterAdapter twitterAdapter;
 
     @Autowired
     private KafkaProducer kafkaProducer;
@@ -34,6 +34,6 @@ public class TwitterKafkaAnalyserApplication implements CommandLineRunner {
             }
         }).start();
 
-        twitterProducer.execute(kafkaProducer);
+        twitterAdapter.execute(kafkaProducer);
     }
 }
