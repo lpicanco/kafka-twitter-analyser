@@ -1,15 +1,14 @@
 package com.neutrine.twitteranalyser.producer;
 
-import com.neutrine.twitteranalyser.MessageProcessor;
 import org.springframework.stereotype.Service;
 
 /**
  * Created by lpicanco on 16/01/16.
  */
 @Service
-public class ConsoleProducer implements MessageProcessor<String> {
+public class ConsoleProducer implements MessageProducer<String> {
     @Override
-    public void process(String message) {
+    public void process(String topic, String message) {
         System.out.println("Message: " + message);
     }
 

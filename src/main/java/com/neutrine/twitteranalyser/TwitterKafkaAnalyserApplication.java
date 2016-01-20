@@ -21,7 +21,6 @@ public class TwitterKafkaAnalyserApplication implements CommandLineRunner {
     private KafkaConsumer kafkaConsumer;
 
 
-
     public static void main(String[] args) {
         SpringApplication.run(TwitterKafkaAnalyserApplication.class, args);
     }
