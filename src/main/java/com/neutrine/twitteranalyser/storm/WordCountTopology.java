@@ -10,6 +10,7 @@ import backtype.storm.generated.StormTopology;
 import backtype.storm.spout.SchemeAsMultiScheme;
 import backtype.storm.topology.TopologyBuilder;
 import com.neutrine.twitteranalyser.Configuration;
+import com.neutrine.twitteranalyser.storm.bolt.WordFilterBolt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -29,15 +30,14 @@ public class WordCountTopology {
 
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
+    @Autowired
     private Configuration config;
 
-    @Autowired
-    public WordCountTopology(Configuration config) throws InvalidTopologyException, AuthorizationException, AlreadyAliveException {
-        this.config = config;
+    public void execute() throws InvalidTopologyException, AuthorizationException, AlreadyAliveException {
 
-        StormSubmitter.submitTopology("word-count-analysis", createConfig(), createTopology());
-//        LocalCluster cluster = new LocalCluster();
-//        cluster.submitTopology("word-count-analysis", createConfig(), createTopology());
+        //StormSubmitter.submitTopology("word-count-analysis", createConfig(), createTopology());
+        LocalCluster cluster = new LocalCluster();
+        cluster.submitTopology("word-count-analysis", createConfig(), createTopology());
     }
 
     private StormTopology createTopology() {
@@ -48,6 +48,9 @@ public class WordCountTopology {
         TopologyBuilder topology = new TopologyBuilder();
 
         topology.setSpout("kafka_spout", new KafkaSpout(kafkaConf), 1);
+
+        topology.setBolt("word_filter", new WordFilterBolt(), 1)
+                .shuffleGrouping("kafka_spout");
 
         return topology.createTopology();
     }
