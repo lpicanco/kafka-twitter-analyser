@@ -2,7 +2,7 @@ package com.neutrine.twitteranalyser.adapter;
 
 import com.google.common.collect.Lists;
 import com.neutrine.twitteranalyser.Configuration;
-import com.neutrine.twitteranalyser.MessageProcessor;
+import com.neutrine.twitteranalyser.producer.MessageProducer;
 import com.twitter.hbc.ClientBuilder;
 import com.twitter.hbc.core.Client;
 import com.twitter.hbc.core.Constants;
@@ -11,7 +11,6 @@ import com.twitter.hbc.core.processor.StringDelimitedProcessor;
 import com.twitter.hbc.httpclient.auth.Authentication;
 import com.twitter.hbc.httpclient.auth.OAuth1;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
 import org.springframework.stereotype.Service;
 
 import java.util.concurrent.BlockingQueue;
@@ -21,11 +20,11 @@ import java.util.concurrent.LinkedBlockingQueue;
  * Created by lpicanco on 16/01/16.
  */
 @Service
-public class TwitterProducer {
+public class TwitterAdapter {
     @Autowired
     private Configuration config;
 
-    public void execute(MessageProcessor<String> messageProcessor) {
+    public void execute(MessageProducer<String> messageProducer) {
         BlockingQueue<String> queue = new LinkedBlockingQueue<String>(10000);
         StatusesFilterEndpoint endpoint = new StatusesFilterEndpoint();
 
@@ -43,13 +42,13 @@ public class TwitterProducer {
 
         while (!client.isDone()) {
             try {
-                messageProcessor.process(queue.take());
+                messageProducer.process(config.getKafkaTopic(), queue.take());
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
         }
 
         client.stop();
-        messageProcessor.close();
+        messageProducer.close();
     }
 }

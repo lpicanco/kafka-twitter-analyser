@@ -25,9 +25,12 @@ public class Configuration {
     @Value("${kafka.topic}")
     private String kafkaTopic;
 
+    @Value("${kafka.twitter.word.topic}")
+    private String kafkaTwitterWordTopic;
+
+
     @Value("${zookeeper.connect}")
     private String zookeeperConnect;
-
 
     @Value("${kafka.broker.list}")
     private String kafkaBrokerList;
@@ -85,5 +88,13 @@ public class Configuration {
 
     public void setZookeeperConnect(String zookeeperConnect) {
         this.zookeeperConnect = zookeeperConnect;
+    }
+
+    public String getKafkaTwitterWordTopic() {
+        return kafkaTwitterWordTopic;
+    }
+
+    public void setKafkaTwitterWordTopic(String kafkaTwitterWordTopic) {
+        this.kafkaTwitterWordTopic = kafkaTwitterWordTopic;
     }
 }
