@@ -10,6 +10,7 @@ import backtype.storm.generated.StormTopology;
 import backtype.storm.spout.SchemeAsMultiScheme;
 import backtype.storm.topology.TopologyBuilder;
 import com.neutrine.twitteranalyser.Configuration;
+import com.neutrine.twitteranalyser.storm.bolt.WordCounterBolt;
 import com.neutrine.twitteranalyser.storm.bolt.WordFilterBolt;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -52,12 +53,15 @@ public class WordCountTopology {
         topology.setBolt("word_filter", new WordFilterBolt(), 1)
                 .shuffleGrouping("kafka_spout");
 
+        topology.setBolt("word_counter", new WordCounterBolt(), 1)
+                .shuffleGrouping("word_filter");
+
         return topology.createTopology();
     }
 
     private Config createConfig() {
         Config conf = new Config();
-        conf.setDebug(true);
+        conf.setDebug(false);
         conf.setNumWorkers(1);
         return conf;
     }
