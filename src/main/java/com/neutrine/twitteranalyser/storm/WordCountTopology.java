@@ -10,6 +10,7 @@ import backtype.storm.generated.StormTopology;
 import backtype.storm.spout.SchemeAsMultiScheme;
 import backtype.storm.topology.TopologyBuilder;
 import com.neutrine.twitteranalyser.Configuration;
+import com.neutrine.twitteranalyser.storm.bolt.MongoPersistBolt;
 import com.neutrine.twitteranalyser.storm.bolt.WordCounterBolt;
 import com.neutrine.twitteranalyser.storm.bolt.WordFilterBolt;
 import org.slf4j.Logger;
@@ -21,6 +22,7 @@ import storm.kafka.SpoutConfig;
 import storm.kafka.StringScheme;
 import storm.kafka.ZkHosts;
 
+import java.net.UnknownHostException;
 import java.util.Map;
 
 /**
@@ -34,14 +36,14 @@ public class WordCountTopology {
     @Autowired
     private Configuration config;
 
-    public void execute() throws InvalidTopologyException, AuthorizationException, AlreadyAliveException {
+    public void execute() throws InvalidTopologyException, AuthorizationException, AlreadyAliveException, UnknownHostException {
 
         //StormSubmitter.submitTopology("word-count-analysis", createConfig(), createTopology());
         LocalCluster cluster = new LocalCluster();
         cluster.submitTopology("word-count-analysis", createConfig(), createTopology());
     }
 
-    private StormTopology createTopology() {
+    private StormTopology createTopology() throws UnknownHostException {
         SpoutConfig kafkaConf = new SpoutConfig(new ZkHosts(config.getZookeeperConnect()),
                 config.getKafkaTwitterWordTopic(), "/kafka", "KafkaSpoutTwitterWord");
 
@@ -55,6 +57,9 @@ public class WordCountTopology {
 
         topology.setBolt("word_counter", new WordCounterBolt(), 1)
                 .shuffleGrouping("word_filter");
+
+        topology.setBolt("mongo_persist", new MongoPersistBolt(), 2)
+                .shuffleGrouping("word_counter");
 
         return topology.createTopology();
     }

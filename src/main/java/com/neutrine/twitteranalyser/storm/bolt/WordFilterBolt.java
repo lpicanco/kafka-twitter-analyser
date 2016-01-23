@@ -20,7 +20,7 @@ public class WordFilterBolt extends BaseBasicBolt {
     public void execute(Tuple tuple, BasicOutputCollector collector) {
         String text = tuple.getString(0);
 
-        if (StringUtils.startsWith(text, "@")) {
+        if (StringUtils.startsWith(text, "@") || StringUtils.trim(text).length() <= 4) {
             log.debug("Filtering: " + text);
         } else {
             collector.emit(new Values(text));
