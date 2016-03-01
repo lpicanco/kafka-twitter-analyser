@@ -28,7 +28,9 @@ public class TwitterAdapter {
         BlockingQueue<String> queue = new LinkedBlockingQueue<String>(10000);
         StatusesFilterEndpoint endpoint = new StatusesFilterEndpoint();
 
-        endpoint.trackTerms(Lists.newArrayList("brazil", "kafka"));
+        String topic = "dilma"; // dilma, zika, trump, oscar, hillary
+        //endpoint.trackTerms(Lists.newArrayList("zika"));
+        endpoint.trackTerms(Lists.newArrayList(topic));
 
 
         Authentication auth = new OAuth1(config.getConsumerKey(), config.getConsumerSecret(), config.getToken(),
@@ -39,10 +41,15 @@ public class TwitterAdapter {
                 .processor(new StringDelimitedProcessor(queue)).build();
 
         client.connect();
-
         while (!client.isDone()) {
             try {
-                messageProducer.process(config.getKafkaTopic(), queue.take());
+                String query = "{ \n" +
+                        "  \"query\":\"%s\", \n" +
+                        "  \"payload\": %s\n" +
+                        "}";
+
+                String json = String.format(query, topic, queue.take());
+                messageProducer.process(config.getKafkaTopic(), json);
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

@@ -35,10 +35,10 @@ public class MessageDrivenKafkaConsumer {
         return new DefaultConnectionFactory(zkConfiguration());
     }
 
-    @Bean
+    //@Bean
     public MessageProducer kafkaMessageDrivenChannelAdapter() {
         KafkaMessageDrivenChannelAdapter adapter = new KafkaMessageDrivenChannelAdapter(
-                new KafkaMessageListenerContainer(kafkaConnectionFactory(), "twitter")
+                new KafkaMessageListenerContainer(kafkaConnectionFactory(), config.getKafkaTopic())
         );
         adapter.setOutputChannel(twitterConsumer);
         return adapter;
