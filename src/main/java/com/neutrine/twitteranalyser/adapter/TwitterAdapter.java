@@ -28,8 +28,7 @@ public class TwitterAdapter {
         BlockingQueue<String> queue = new LinkedBlockingQueue<String>(10000);
         StatusesFilterEndpoint endpoint = new StatusesFilterEndpoint();
 
-        String topic = "dilma"; // dilma, zika, trump, oscar, hillary
-        //endpoint.trackTerms(Lists.newArrayList("zika"));
+        String topic = "oscar"; // trump, oscar, hillary
         endpoint.trackTerms(Lists.newArrayList(topic));
 
 
