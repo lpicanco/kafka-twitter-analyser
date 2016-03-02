@@ -22,6 +22,10 @@ public class TwitterKafkaAnalyserApplication implements CommandLineRunner {
 
     @Override
     public void run(String... strings) throws Exception {
-        twitterAdapter.execute(kafkaProducer);
+
+        boolean hasTopic = strings.length > 0;
+
+        String topic = hasTopic ? strings[0] : "garden_hose";
+        twitterAdapter.execute(kafkaProducer, topic, hasTopic);
     }
 }

@@ -10,6 +10,7 @@ import org.springframework.context.annotation.Scope;
 import org.springframework.stereotype.Service;
 
 import java.util.Properties;
+import java.util.concurrent.atomic.AtomicLong;
 
 /**
  * Created by lpicanco on 16/01/16.
@@ -20,6 +21,7 @@ public class KafkaProducer implements MessageProducer<String> {
     private final Logger log = LoggerFactory.getLogger(this.getClass());
 
     private Configuration config;
+    private AtomicLong messageCount = new AtomicLong();
 
     private kafka.javaapi.producer.Producer<String, String> producer;
 
@@ -37,7 +39,15 @@ public class KafkaProducer implements MessageProducer<String> {
 
     @Override
     public void process(String topic, String messageToProcess) {
-        log.debug("Processing: " + messageToProcess);
+        long count = messageCount.getAndIncrement();
+
+        if (count % 1000 == 0) {
+            log.debug("Total processed: " + count);
+        }
+
+
+        //log.debug("Processing: " + messageToProcess);
+
         KeyedMessage<String, String> message = new KeyedMessage<>(topic, messageToProcess);
         producer.send(message);
     }
